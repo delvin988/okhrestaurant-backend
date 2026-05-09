@@ -15,7 +15,10 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // React
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "https://old-klang-house-2wwb.vercel.app"
+        ));// React
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
