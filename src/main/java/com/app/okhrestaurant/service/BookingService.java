@@ -1,21 +1,20 @@
 package com.app.okhrestaurant.service;
 
 import com.app.okhrestaurant.entity.Booking;
-import com.app.okhrestaurant.repository.BookingRP;
+import com.app.okhrestaurant.repository.BookingRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class BookingService {
 
-    private final BookingRP bookingRepository;
+    private final BookingRepository bookingRepository;
 
-    public BookingService(BookingRP bookingRepository) {
+    public BookingService(BookingRepository bookingRepository) {
         this.bookingRepository = bookingRepository;
     }
 
@@ -86,5 +85,38 @@ public class BookingService {
         );
 
         return bookingRepository.save(booking);
+    }
+
+    public List<Booking> getRangeBooking(String startDate, String endDate) {
+
+        if (startDate == null || startDate.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        if (endDate == null || endDate.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        LocalDateTime start = LocalDate.parse(startDate).atStartOfDay();
+
+        LocalDateTime end = LocalDate.parse(endDate).atTime(23, 59, 59);
+
+        return bookingRepository.findByBookingTimeBetween(start, end);
+    }
+
+    public List<Booking> getUpcomingBookings() {
+
+        LocalDate tomorrow =
+                LocalDate.now()
+                        .plusDays(1);
+
+        LocalDateTime start =
+                tomorrow.atStartOfDay();
+
+        return bookingRepository
+                .findByBookingTimeAfterAndStatusNotOrderByBookingTimeAsc(
+                        start,
+                        "CANCELLED"
+                );
     }
 }

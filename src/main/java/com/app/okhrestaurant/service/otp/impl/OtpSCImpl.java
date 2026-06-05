@@ -7,6 +7,7 @@ import com.app.okhrestaurant.service.sms.SmsSC;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -19,12 +20,41 @@ public class OtpSCImpl implements OtpSC {
 
     @Override
     public String sendOtp(String phone) {
+        long totalToday =
+                otpRP.countByPhoneAndCreatedAtAfter(
+                        phone,
+                        LocalDate.now()
+                                .atStartOfDay()
+                );
+
+        if (totalToday >= 10) {
+            throw new RuntimeException(
+                    "Daily OTP limit reached. Please try again tomorrow."
+            );
+        }
+        Otp latestOtp =
+                otpRP.findTopByPhoneOrderByIdDesc(phone)
+                        .orElse(null);
+
+        if (latestOtp != null &&
+                latestOtp.getCreatedAt() != null &&
+                latestOtp.getCreatedAt()
+                        .plusSeconds(60)
+                        .isAfter(LocalDateTime.now())) {
+
+            throw new RuntimeException(
+                    "Please wait 60 seconds before requesting another code"
+            );
+        }
 
         String code = generateOtp();
 
         Otp otp = Otp.builder()
                 .phone(phone)
                 .code(code)
+                .createdAt(
+                        LocalDateTime.now()
+                )
                 .expiredAt(
                         LocalDateTime.now()
                                 .plusMinutes(5)
@@ -71,5 +101,16 @@ public class OtpSCImpl implements OtpSC {
         return otpRP.findTopByPhoneOrderByIdDesc(phone)
                 .map(otp -> otp.isVerified() && otp.getExpiredAt().isAfter(LocalDateTime.now()))
                 .orElse(false);
+    }
+    @Override
+    public String normalizePhone(String phone) {
+
+        phone = phone.replaceAll("[^0-9]", "");
+
+        if (phone.startsWith("0")) {
+            phone = "62" + phone.substring(1);
+        }
+
+        return phone;
     }
 }

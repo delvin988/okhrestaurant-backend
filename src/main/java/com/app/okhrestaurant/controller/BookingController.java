@@ -48,10 +48,20 @@ public class BookingController {
             @PathVariable Long id,
             @RequestBody Map<String, String> req
     ) {
-
         return bookingService.updateStatus(
                 id,
                 req.get("status")
         );
+    }
+
+    @GetMapping("/reservation")
+    public List<Booking> getRangeBookings( @RequestParam String startDate,  @RequestParam String endDate) {
+        return bookingService.getRangeBooking(startDate, endDate);
+    }
+    @GetMapping("/upcoming")
+    public List<Booking> getUpcomingBookings() {
+
+        return bookingService
+                .getUpcomingBookings();
     }
 }

@@ -6,4 +6,6 @@ public interface OtpSC {
 
     boolean verifyOtp(String phone, String code);
     boolean isPhoneVerified(String phone);
+    String normalizePhone(String phone);
+
 }
