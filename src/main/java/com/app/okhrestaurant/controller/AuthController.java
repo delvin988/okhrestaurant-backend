@@ -23,12 +23,6 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final OtpSC otpSC;
 
-    public AuthController(AdminUserRepository adminUserRepository, PasswordEncoder passwordEncoder) {
-        this.adminUserRepository = adminUserRepository;
-        this.passwordEncoder = passwordEncoder;
-        otpSC = null;
-    }
-
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(
             @RequestBody Map<String, String> req) {
