@@ -17,7 +17,8 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
-                "https://okhindonesia.com"
+                "https://okhindonesia.com",
+                "https://www.okhindonesia.com"
         ));// React
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
